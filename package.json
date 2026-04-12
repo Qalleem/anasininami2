@@ -1,0 +1,10 @@
+{
+  "name": "rapstudio-v8",
+  "version": "8.2.0",
+  "private": true,
+  "description": "Rap Studio mobile web app with engine and integration modules",
+  "scripts": {
+    "serve": "python -m http.server 8000 --bind 0.0.0.0",
+    "verify": "python -c \"import pathlib; p=pathlib.Path('rapstudio_v8.html'); s=p.read_text(encoding='utf-8', errors='ignore'); assert 'id=\\\"s-tools\\\"' in s and 'runIntegrationChecks()' in s; print('verify ok')\""
+  }
+}
