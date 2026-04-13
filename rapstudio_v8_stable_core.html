@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>RAP STUDIO v8 Stable Core</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:#000;color:#fff;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}body{display:flex;justify-content:center}#app{width:min(100%,560px);padding:20px 16px 96px}.logo{text-align:center;letter-spacing:.45em;font-size:12px;color:#9a9a9a;margin:10px 0 16px}.logo em{font-style:normal;color:#e8ff00}.card{border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);border-radius:14px;padding:14px;margin-bottom:12px}.label{font-size:11px;letter-spacing:.28em;color:#8f8f8f;margin-bottom:10px}.small{font-size:11px;color:#9f9f9f;line-height:1.6}.row{display:flex;gap:8px;align-items:center}.row>*{min-width:0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btn{width:100%;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:transparent;color:#fff;padding:12px;cursor:pointer;font:inherit;letter-spacing:.18em}.btn.primary{background:#e8ff00;color:#000;border:none;font-weight:700}.btn:disabled{opacity:.3;cursor:default}.btn.active{border-color:#e8ff00;color:#e8ff00;background:rgba(232,255,0,.06)}.status{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.pill{border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:6px 10px;font-size:10px;letter-spacing:.18em;color:#bdbdbd}.pill.ok{border-color:rgba(232,255,0,.3);color:#e8ff00}.pill.warn{border-color:rgba(255,176,0,.3);color:#ffb000}.role{padding:14px;border:1px solid rgba(255,255,255,.1);border-radius:12px;cursor:pointer;background:rgba(255,255,255,.02)}.role.active{border-color:#e8ff00;background:rgba(232,255,0,.05)}.role .t{font-size:18px;color:#d5d5d5;margin-bottom:4px}.role.active .t{color:#e8ff00}.role .d{font-size:11px;color:#8a8a8a}.center{display:flex;flex-direction:column;align-items:center}.rec{width:126px;height:126px;border-radius:50%;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.03);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer}.rec.recording{border-color:rgba(255,59,59,.6);background:rgba(255,59,59,.08)}.dot{width:16px;height:16px;background:#ff3b3b;border-radius:50%}.rec.recording .dot{border-radius:4px}.timer{font-size:34px;color:#ff3b3b;display:none;margin-top:8px}.timer.on{display:block}.beats .btn{text-align:left}.beats .meta{display:block;font-size:11px;color:#8f8f8f;margin-top:4px;letter-spacing:.1em}.prog{height:4px;background:rgba(255,255,255,.1);border-radius:99px;position:relative;overflow:hidden;cursor:pointer}.prog>div{position:absolute;inset:0 auto 0 0;width:0;background:#e8ff00}.hidden{display:none!important}input[type=range]{width:100%}#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:rgba(0,0,0,.92);border:1px solid rgba(255,255,255,.1);padding:10px 14px;border-radius:999px;font-size:11px;letter-spacing:.16em;color:#cfcfcf;opacity:0;pointer-events:none;transition:opacity .2s}#toast.on{opacity:1}audio{width:100%}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="logo"><em>RAP</em>STUDIO STABLE CORE</div>
+  <div class="status">
+    <span class="pill" id="securePill">SECURE UNKNOWN</span>
+    <span class="pill" id="micPill">MIC IDLE</span>
+    <span class="pill" id="beatPill">NO BEAT</span>
+    <span class="pill" id="vocalPill">NO VOCAL</span>
+  </div>
+
+  <div class="card">
+    <div class="label">ROLE</div>
+    <div class="grid">
+      <div class="role active" id="roleMain"><div class="t">MAIN</div><div class="d">VERSE · HOOK</div></div>
+      <div class="role" id="roleAdlib"><div class="t">ADLIB</div><div class="d">TEXTURE · THROW</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="label">VOCAL</div>
+    <div class="center">
+      <button class="rec" id="recBtn"><div class="dot"></div><div id="recText" style="font-size:11px;letter-spacing:.24em;color:#b8b8b8">RECORD</div></button>
+      <div class="timer" id="timer">0:00</div>
+    </div>
+    <div style="margin-top:12px"><button class="btn" id="uploadBtn">UPLOAD VOCAL</button><input id="fileIn" type="file" accept="audio/*" class="hidden"></div>
+    <div class="small" id="vocalInfo" style="margin-top:10px">No vocal loaded.</div>
+  </div>
+
+  <div class="card beats">
+    <div class="label">BEAT</div>
+    <div class="grid" style="margin-bottom:10px">
+      <button class="btn beatBtn" data-beat="trap">TRAP<span class="meta">140 BPM</span></button>
+      <button class="btn beatBtn" data-beat="boombap">BOOM BAP<span class="meta">92 BPM</span></button>
+      <button class="btn beatBtn" data-beat="drill">DRILL<span class="meta">140 BPM</span></button>
+      <button class="btn beatBtn" data-beat="lofi">LO-FI<span class="meta">85 BPM</span></button>
+    </div>
+    <div class="row"><button class="btn" id="beatPlay" style="width:110px">PLAY</button><div class="prog" id="beatProg" style="flex:1"><div id="beatFill"></div></div><div id="beatTime" class="small" style="width:42px;text-align:right">0:00</div></div>
+    <div class="small" style="margin-top:10px">Beat artık harici CDN kullanmıyor. Tarayıcı içinde üretiliyor.</div>
+  </div>
+
+  <div class="card">
+    <div class="label">MIX</div>
+    <div class="row" style="margin-bottom:10px"><button class="btn primary" id="mixPlay" style="width:140px">PLAY MIX</button><div class="prog" id="mixProg" style="flex:1"><div id="mixFill"></div></div><div id="mixTime" class="small" style="width:42px;text-align:right">0:00</div></div>
+    <div class="row"><div class="small" style="width:56px">VOCAL</div><input id="vVol" type="range" min="0" max="100" value="92"></div>
+    <div class="row" style="margin-top:8px"><div class="small" style="width:56px">BEAT</div><input id="bVol" type="range" min="0" max="100" value="62"></div>
+  </div>
+
+  <div class="card">
+    <div class="label">EXPORT</div>
+    <button class="btn primary" id="exportMix">EXPORT MIX WAV</button>
+    <button class="btn" id="exportVocal" style="margin-top:8px">EXPORT VOCAL WAV</button>
+    <button class="btn" id="exportBeat" style="margin-top:8px">EXPORT BEAT WAV</button>
+  </div>
+
+  <div class="card">
+    <div class="label">PREVIEW</div>
+    <audio id="preview" controls></audio>
+  </div>
+</div>
+<div id="toast"></div>
+<script>
+const S={ctx:null,stream:null,rec:null,chunks:[],recording:false,timerInt:null,secs:0,role:'main',vocalBlob:null,vocalBuf:null,beatType:null,beatBuf:null,beatBpm:0,beatSrc:null,beatGain:null,beatStart:0,beatOffset:0,beatInt:null,mixVSrc:null,mixBSrc:null,mixPlaying:false,mixStart:0,mixInt:null};
+const $=id=>document.getElementById(id);
+function toast(t,m=2200){const el=$('toast');el.textContent=t;el.classList.add('on');clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove('on'),m)}
+function updStatus(){ $('securePill').textContent=window.isSecureContext?'SECURE OK':'OPEN VIA HTTPS/LOCALHOST'; $('securePill').className='pill '+(window.isSecureContext?'ok':'warn'); $('micPill').textContent=S.recording?'MIC RECORDING':(S.stream?'MIC READY':'MIC IDLE'); $('micPill').className='pill '+(S.stream?'ok':''); $('beatPill').textContent=S.beatBuf?(S.beatType.toUpperCase()+' '+S.beatBpm+' BPM'):'NO BEAT'; $('beatPill').className='pill '+(S.beatBuf?'ok':''); $('vocalPill').textContent=S.vocalBuf?'VOCAL READY':'NO VOCAL'; $('vocalPill').className='pill '+(S.vocalBuf?'ok':''); }
+async function ctx(){ if(!S.ctx){ const AC=window.AudioContext||window.webkitAudioContext; S.ctx=new AC({latencyHint:'interactive'}); } if(S.ctx.state==='suspended') await S.ctx.resume(); return S.ctx; }
+function setRole(r){ S.role=r; $('roleMain').classList.toggle('active',r==='main'); $('roleAdlib').classList.toggle('active',r==='adlib'); }
+$('roleMain').onclick=()=>setRole('main'); $('roleAdlib').onclick=()=>setRole('adlib');
+async function ensureMic(){ if(!window.isSecureContext) throw new Error('HTTPS or localhost gerekli'); if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia) throw new Error('getUserMedia yok'); if(!S.stream) S.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false,channelCount:1},video:false}); updStatus(); return S.stream; }
+function fmt(s){ s=Math.max(0,Math.floor(s||0)); const m=Math.floor(s/60),x=s%60; return m+':'+String(x).padStart(2,'0'); }
+async function toggleRec(){ if(S.recording) return stopRec(); try{ await ensureMic(); const mime=(window.MediaRecorder&&MediaRecorder.isTypeSupported('audio/webm;codecs=opus'))?'audio/webm;codecs=opus':''; S.rec=new MediaRecorder(S.stream,mime?{mimeType:mime}:{}); S.chunks=[]; S.rec.ondataavailable=e=>{ if(e.data&&e.data.size) S.chunks.push(e.data); }; S.rec.onstop=async()=>{ S.vocalBlob=new Blob(S.chunks,{type:S.chunks[0]?.type||'audio/webm'}); $('preview').src=URL.createObjectURL(S.vocalBlob); $('vocalInfo').textContent='Recorded: '+(S.vocalBlob.size/1024).toFixed(1)+' KB'; try{ S.vocalBuf=await blobToBuffer(S.vocalBlob); toast('VOCAL SAVED'); }catch(e){ toast('VOCAL DECODE FAILED',3000); } updStatus(); }; S.rec.start(100); S.recording=true; S.secs=0; $('recBtn').classList.add('recording'); $('recText').textContent='STOP'; $('timer').classList.add('on'); $('timer').textContent='0:00'; S.timerInt=setInterval(()=>{ S.secs++; $('timer').textContent=fmt(S.secs); },1000); updStatus(); toast('RECORDING...'); }catch(e){ toast(e.message||'MIC ERROR',3200); } }
+function stopRec(){ if(S.rec&&S.rec.state!=='inactive') S.rec.stop(); S.recording=false; clearInterval(S.timerInt); $('recBtn').classList.remove('recording'); $('recText').textContent='RECORD'; $('timer').classList.remove('on'); updStatus(); }
+$('recBtn').onclick=toggleRec;
+$('uploadBtn').onclick=()=>$('fileIn').click(); $('fileIn').onchange=async e=>{ const f=e.target.files?.[0]; if(!f) return; try{ S.vocalBlob=f; S.vocalBuf=await blobToBuffer(f); $('preview').src=URL.createObjectURL(f); $('vocalInfo').textContent='Uploaded: '+f.name+' · '+fmt(S.vocalBuf.duration); updStatus(); toast('VOCAL LOADED'); }catch(err){ toast('UPLOAD/DECODE FAILED',3000); } e.target.value=''; };
+async function blobToBuffer(blob){ const c=await ctx(); const ab=await blob.arrayBuffer(); return await c.decodeAudioData(ab.slice(0)); }
+function makeBeatBuffer(type,bpm,bars=8){ const sr=48000; const beatDur=60/bpm; const len=Math.floor(sr*beatDur*4*bars); const buf=new AudioBuffer({length:len,numberOfChannels:2,sampleRate:sr}); const l=buf.getChannelData(0), r=buf.getChannelData(1); const add=(arr,start,samples,fn,amp=1)=>{ for(let i=0;i<samples&&start+i<arr.length;i++) arr[start+i]+=fn(i,samples)*amp; };
+ const kick=(i,n)=>Math.sin(2*Math.PI*55*(i/sr))*Math.exp(-i/(n*0.18)); const sn=(i,n)=>((Math.random()*2-1))*Math.exp(-i/(n*0.12)); const hh=(i,n)=>((Math.random()*2-1))*Math.exp(-i/(n*0.03));
+ const step=Math.floor(sr*beatDur/2); const totalSteps=Math.floor(len/step); for(let s=0;s<totalSteps;s++){ const pos=s*step; const beat=s%8; if(type==='trap'){ if(beat===0||beat===4) {add(l,pos,Math.floor(sr*0.18),kick,1);add(r,pos,Math.floor(sr*0.18),kick,1);} if(beat===4){add(l,pos,Math.floor(sr*0.12),sn,.7);add(r,pos,Math.floor(sr*0.12),sn,.7);} if([1,3,5,7].includes(beat)){add(l,pos,Math.floor(sr*0.03),hh,.18);add(r,pos,Math.floor(sr*0.03),hh,.18);} }
+ if(type==='boombap'){ if(beat===0||beat===4){add(l,pos,Math.floor(sr*0.2),kick,.95);add(r,pos,Math.floor(sr*0.2),kick,.95);} if(beat===2||beat===6){add(l,pos,Math.floor(sr*0.12),sn,.75);add(r,pos,Math.floor(sr*0.12),sn,.75);} if(s%2===1){add(l,pos,Math.floor(sr*0.025),hh,.14);add(r,pos,Math.floor(sr*0.025),hh,.14);} }
+ if(type==='drill'){ if(beat===0||beat===3||beat===5){add(l,pos,Math.floor(sr*0.18),kick,1);add(r,pos,Math.floor(sr*0.18),kick,1);} if(beat===4){add(l,pos,Math.floor(sr*0.12),sn,.72);add(r,pos,Math.floor(sr*0.12),sn,.72);} add(l,pos,Math.floor(sr*0.02),hh,.16);add(r,pos,Math.floor(sr*0.02),hh,.16); }
+ if(type==='lofi'){ if(beat===0||beat===4){add(l,pos,Math.floor(sr*0.22),kick,.7);add(r,pos,Math.floor(sr*0.22),kick,.7);} if(beat===2||beat===6){add(l,pos,Math.floor(sr*0.12),sn,.45);add(r,pos,Math.floor(sr*0.12),sn,.45);} if(s%2===0){add(l,pos,Math.floor(sr*0.03),hh,.08);add(r,pos,Math.floor(sr*0.03),hh,.08);} } }
+ for(let i=0;i<len;i++){ const t=i/sr; const wob=(type==='lofi')?0.015*Math.sin(2*Math.PI*1.2*t):0; l[i]+=wob; r[i]-=wob; l[i]=Math.max(-1,Math.min(1,l[i])); r[i]=Math.max(-1,Math.min(1,r[i])); } return buf; }
+const BEATS={trap:140,boombap:92,drill:140,lofi:85}; document.querySelectorAll('.beatBtn').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.beatBtn').forEach(x=>x.classList.remove('active')); b.classList.add('active'); S.beatType=b.dataset.beat; S.beatBpm=BEATS[S.beatType]; S.beatBuf=makeBeatBuffer(S.beatType,S.beatBpm); $('beatPlay').textContent='PLAY'; $('beatFill').style.width='0%'; $('beatTime').textContent='0:00'; updStatus(); toast('BEAT READY'); });
+function stopBeatPreview(){ if(S.beatSrc){ try{S.beatSrc.stop();}catch(e){} } S.beatSrc=null; S.beatPrevPlaying=false; clearInterval(S.beatInt); $('beatPlay').textContent='PLAY'; }
+async function toggleBeatPreview(){ if(!S.beatBuf) return toast('SELECT BEAT',1800); if(S.beatPrevPlaying) return stopBeatPreview(); const c=await ctx(); const src=c.createBufferSource(); const g=c.createGain(); g.gain.value=0.65; src.buffer=S.beatBuf; src.loop=true; src.connect(g).connect(c.destination); src.start(0,S.beatOffset%S.beatBuf.duration); S.beatSrc=src; S.beatPrevPlaying=true; S.beatStart=c.currentTime-(S.beatOffset%S.beatBuf.duration); $('beatPlay').textContent='STOP'; S.beatInt=setInterval(()=>{ const el=(c.currentTime-S.beatStart)%S.beatBuf.duration; $('beatFill').style.width=((el/S.beatBuf.duration)*100)+'%'; $('beatTime').textContent=fmt(el); },120); src.onended=stopBeatPreview; }
+$('beatPlay').onclick=toggleBeatPreview; $('beatProg').onclick=e=>{ if(!S.beatBuf) return; const r=e.currentTarget.getBoundingClientRect(); S.beatOffset=((e.clientX-r.left)/r.width)*S.beatBuf.duration; if(S.beatPrevPlaying){ stopBeatPreview(); toggleBeatPreview(); } else { $('beatFill').style.width=((S.beatOffset/S.beatBuf.duration)*100)+'%'; $('beatTime').textContent=fmt(S.beatOffset); } };
+function stopMix(){ if(S.mixVSrc) try{S.mixVSrc.stop();}catch(e){} if(S.mixBSrc) try{S.mixBSrc.stop();}catch(e){} S.mixVSrc=null; S.mixBSrc=null; S.mixPlaying=false; clearInterval(S.mixInt); $('mixPlay').textContent='PLAY MIX'; }
+async function playMix(){ if(!S.vocalBuf) return toast('LOAD VOCAL',1800); if(!S.beatBuf) return toast('SELECT BEAT',1800); if(S.mixPlaying) return stopMix(); const c=await ctx(); const v=c.createBufferSource(), b=c.createBufferSource(); const vg=c.createGain(), bg=c.createGain(); v.buffer=S.vocalBuf; b.buffer=S.beatBuf; b.loop=true; vg.gain.value=(+$('vVol').value)/100; bg.gain.value=((+$('bVol').value)/100)*0.9; v.connect(vg).connect(c.destination); b.connect(bg).connect(c.destination); v.start(); b.start(); S.mixVSrc=v; S.mixBSrc=b; S.mixPlaying=true; S.mixStart=c.currentTime; $('mixPlay').textContent='STOP MIX'; S.mixInt=setInterval(()=>{ const el=c.currentTime-S.mixStart; const dur=S.vocalBuf.duration; $('mixFill').style.width=(Math.min(1,el/dur)*100)+'%'; $('mixTime').textContent=fmt(Math.min(el,dur)); },120); v.onended=()=>stopMix(); }
+$('mixPlay').onclick=playMix;
+function wavBlobFromBuffer(buf){ const num=buf.numberOfChannels, len=buf.length*2*num, out=new ArrayBuffer(44+len), v=new DataView(out); const write=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));}; write(0,'RIFF'); v.setUint32(4,36+len,true); write(8,'WAVE'); write(12,'fmt '); v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,num,true); v.setUint32(24,buf.sampleRate,true); v.setUint32(28,buf.sampleRate*num*2,true); v.setUint16(32,num*2,true); v.setUint16(34,16,true); write(36,'data'); v.setUint32(40,len,true); let o=44; for(let i=0;i<buf.length;i++){ for(let c=0;c<num;c++){ let s=buf.getChannelData(c)[i]; s=Math.max(-1,Math.min(1,s)); v.setInt16(o,s<0?s*0x8000:s*0x7fff,true); o+=2; } } return new Blob([out],{type:'audio/wav'}); }
+function downloadBlob(blob,name){ const u=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),20000); }
+async function renderMixBuffer(includeV=true,includeB=true){ const sampleRate=48000; const dur=Math.max(includeV&&S.vocalBuf?S.vocalBuf.duration:0, includeB&&S.beatBuf?(S.vocalBuf?S.vocalBuf.duration:S.beatBuf.duration):0); const frames=Math.max(1,Math.ceil(dur*sampleRate)); const oc=new OfflineAudioContext(2,frames,sampleRate); if(includeV&&S.vocalBuf){ const v=oc.createBufferSource(); const g=oc.createGain(); g.gain.value=(+$('vVol').value)/100; v.buffer=S.vocalBuf; v.connect(g).connect(oc.destination); v.start(); } if(includeB&&S.beatBuf){ const b=oc.createBufferSource(); const g=oc.createGain(); g.gain.value=((+$('bVol').value)/100)*0.9; b.buffer=S.beatBuf; b.loop=true; b.connect(g).connect(oc.destination); b.start(); } return await oc.startRendering(); }
+$('exportMix').onclick=async()=>{ if(!S.vocalBuf||!S.beatBuf) return toast('VOCAL + BEAT REQUIRED',2200); toast('RENDERING MIX...',1600); const buf=await renderMixBuffer(true,true); downloadBlob(wavBlobFromBuffer(buf),'rapstudio_mix.wav'); toast('MIX EXPORTED'); };
+$('exportVocal').onclick=async()=>{ if(!S.vocalBuf) return toast('NO VOCAL',1800); downloadBlob(wavBlobFromBuffer(S.vocalBuf),'rapstudio_vocal.wav'); toast('VOCAL EXPORTED'); };
+$('exportBeat').onclick=async()=>{ if(!S.beatBuf) return toast('NO BEAT',1800); downloadBlob(wavBlobFromBuffer(S.beatBuf),'rapstudio_beat.wav'); toast('BEAT EXPORTED'); };
+$('go-beat').onclick=()=>document.querySelector('[data-beat="trap"]').scrollIntoView({behavior:'smooth',block:'center'});
+updStatus();
+</script>
+</body>
+</html>
