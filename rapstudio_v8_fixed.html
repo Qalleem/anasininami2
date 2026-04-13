@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>RapStudio v8.2 FIXED</title>
+</head>
+<body>
+<h1>RapStudio v8.2 Stable</h1>
+<button id="start">Start Mic</button>
+<button id="stop">Stop</button>
+<button id="export">Export</button>
+<audio id="playback" controls></audio>
+
+<script>
+let recorder, chunks=[];
+
+async function init(){
+ try{
+  const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+  recorder = new MediaRecorder(stream);
+  recorder.ondataavailable = e=>chunks.push(e.data);
+  recorder.onstop = ()=>{
+    const blob=new Blob(chunks);
+    document.getElementById('playback').src=URL.createObjectURL(blob);
+    chunks=[];
+  };
+ }catch(e){alert(e.message);}
+}
+
+document.getElementById('start').onclick=async()=>{
+ if(!recorder) await init();
+ recorder.start();
+};
+
+document.getElementById('stop').onclick=()=>{
+ if(recorder && recorder.state!=='inactive') recorder.stop();
+};
+
+document.getElementById('export').onclick=()=>{
+ if(!chunks.length) return alert('No audio');
+ const blob=new Blob(chunks);
+ const a=document.createElement('a');
+ a.href=URL.createObjectURL(blob);
+ a.download='rap.webm';
+ a.click();
+};
+</script>
+</body>
+</html>
